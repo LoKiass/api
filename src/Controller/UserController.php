@@ -2,13 +2,17 @@
 
 namespace App\Controller;
 
+use PDOException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use UserService;
 
 final class UserController extends AbstractController
 {
+    public function __construct(private UserService $userservice){}
+
     #[Route('/user', name: 'app_user')]
     public function index(): JsonResponse
     {
@@ -18,12 +22,27 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/login', name:'api-login-attempt', methods:['GET'])]
+    #[Route('/user/login', name:'api-login-attempt', methods:['POST'])]
     public function loginAttempt(Request $request): JsonResponse
     {
-        $username = $request->query->get('username');
-        $password = $request->query->get('password');
+        try{
+            $result = $this->userservice->checkUser($request->toArray()['username'], $request->toArray()['password']);
 
-        
+            // In the case that the credential the controler are the same than the database 
+            if ($result){
+                return new JsonResponse([
+                    "message" => "Connection succeful, welcome aboard",
+                ], 200);
+            } else{
+                return new JsonResponse([
+                    "error" => "Wrong credential, try again"
+                ], 403);
+            }
+        }catch(PDOException $e){
+            return new JsonResponse([
+                "message" => "Database Connection error",
+                "error" => $e
+            ], 503);
+        } 
     }
 }
