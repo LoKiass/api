@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use UserService;
+use App\Service\UserService;
 
 final class UserController extends AbstractController
 {
@@ -45,4 +45,14 @@ final class UserController extends AbstractController
             ], 503);
         } 
     }
+
+    #[Route('/user/test', name: 'api-test-user', methods: ['GET'])]
+    public function test(){
+        return new JsonResponse([
+            "message" => "TU A REUSSIS"
+        ]);
+    }
+
+    
+
 }
