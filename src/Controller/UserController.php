@@ -44,15 +44,5 @@ final class UserController extends AbstractController
                 "error" => $e
             ], 503);
         } 
-    }
-
-    #[Route('/user/test', name: 'api-test-user', methods: ['GET'])]
-    public function test(){
-        return new JsonResponse([
-            "message" => "TU A REUSSIS"
-        ]);
-    }
-
-    
-
+    }    
 }

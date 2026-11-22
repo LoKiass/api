@@ -10,7 +10,7 @@ class UserService{
     public function checkUser(string $username, string $password){
         $pdo = $this->database->getConnection();
         $stmt = $pdo->prepare("SELECT 1 FROM user_table WHERE username = ? AND passwrd = ?");
-        $result = $stmt->execute([$username, $password]);
+        $stmt->execute([$username, $password]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
