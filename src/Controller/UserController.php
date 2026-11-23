@@ -33,17 +33,16 @@ final class UserController extends AbstractController
             // In the case that the credential the controler are the same than the database 
             if ($result){
                 return new JsonResponse([
-                    "message" => "Connection succeful, welcome aboard",
+                    "message" => "Connection reussis",
                 ], 201);
             } else{
                 return new JsonResponse([
-                    "error" => "Wrong credential, try again"
+                    "error" => "Les informations fournites sont invalides, veuillez re-essayer à nouveau"
                 ], 403);
             }
         }catch(PDOException $e){
             return new JsonResponse([
-                "message" => "Database Connection error",
-                "error" => $e
+                "message" => "Erreur lors de la connexion à la base de donnée",
             ], 503);
         } 
     }    
@@ -69,6 +68,9 @@ final class UserController extends AbstractController
             return new JsonResponse([], 201);
         
         } catch(PDOException $e){
+            return new JsonResponse([
+                "error" => "Erreur lors de la connection à la base de donnée"
+            ], 503);
         }
         // Return the confirmation of the creation of the credentials
 
