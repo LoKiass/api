@@ -4,12 +4,20 @@ use PhpParser\Node\Expr\Cast\Void_;
 
 class UserModel{
     private int $id_user;
+    private string $username;
     private string $nom;
     private string $email;
     private string $prenom;
     private string $password;
 
-    public function __construct(){}
+    public function __construct(int $t_id,string $t_username,string $t_email,string $t_password, string $t_nom, string $t_prenom, ){
+        $this->id_user = $t_id;
+        $this->username = $t_username;
+        $this->nom = $t_nom;
+        $this->prenom = $t_prenom;
+        $this->email = $t_email;
+        $this->password = $t_password;
+    }
 
     // Setter and getter
     public function set_iduser(int $t_iduser) : void{
@@ -27,6 +35,9 @@ class UserModel{
     public function set_password(string $t_password) : void{
         $this->password = $t_password;
     }
+    public function set_username(string $t_username) {
+        $this->username = $t_username;
+    }
 
     public function get_iduser() : int{
         return $this->id_user;
@@ -43,8 +54,11 @@ class UserModel{
     public function get_password() : string{
         return $this->password;
     }
+    public function get_username() : string{
+        return $this->username;
+    }
 
-    public static function fromArray() : array{
+    public static function fromArray() : array{ // Will be make when needed 
         
     }
 }

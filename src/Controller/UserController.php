@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Service\UserService;
+use UserModel;
 
 final class UserController extends AbstractController
 {
@@ -27,8 +28,16 @@ final class UserController extends AbstractController
     #[Route('/user/login', name:'api-login-attempt', methods:['POST'])]
     public function loginAttempt(Request $request): JsonResponse
     {
+        $UserToLog = new UserModel(
+                0, // No real need to give an id in that case
+                $request->toArray()['username'],
+                "" ,// No real need to get the email in that case
+                $request->toArray()['password'],
+                "", // No real need aswell to give name or nickname in that form of the formular
+                "",
+            );
         try{
-            $result = $this->userservice->checkUser($request->toArray()['username'], $request->toArray()['password']);
+            $result = $this->userservice->checkUser($UserToLog->get_username(), $UserToLog->get_password());
 
             // In the case that the credential the controler are the same than the database 
             if ($result){
@@ -42,7 +51,7 @@ final class UserController extends AbstractController
             }
         }catch(PDOException $e){
             return new JsonResponse([
-                "message" => "Erreur lors de la connexion à la base de donnée",
+                "error" => "Erreur lors de la connexion à la base de donnée",
             ], 503);
         } 
     }    
@@ -51,14 +60,24 @@ final class UserController extends AbstractController
     public function createLogin(Request $request) : JsonResponse{
         try{
             // Verify if the credential doesnt exist
-            $result = $this->userservice->checkIfAccountIsAlreadyLinked($request->toArray()['email'], $request->toArray()['username']);
+            $UserToCreate = new UserModel(
+                0, // No real need to give an id in that case
+                $request->toArray()['username'],
+                $request->toArray()['email'],
+                $request->toArray()['password'],
+                "", // No real need aswell to give name or nickname in that form of the formular
+                "",
+            );
+            
+
+            $result = $this->userservice->checkIfAccountIsAlreadyLinked($UserToCreate->get_email(), $UserToCreate->get_username());
             if ($result) { // In the case the credential are valid, they already exist, nedd to abord the process
                 return new JsonResponse([
                     "error" => "L'adresse email ou le username fournit dont déjà inscrit dans la base de donné"
                 ], 403 );
             }
             // If the credential doesnt exist, make it 
-            $result = $this->userservice->createUser($request->toArray()['email'], $request->toArray()['username'], $request->toArray()['password']);
+            $result = $this->userservice->createUser($UserToCreate->get_email(), $UserToCreate->get_username(), $UserToCreate->get_password());
         
             if (!$result) {
                 return new JsonResponse([
