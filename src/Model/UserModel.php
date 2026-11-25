@@ -1,6 +1,6 @@
 <?php
 
-use PhpParser\Node\Expr\Cast\Void_;
+namespace App\Model;
 
 class UserModel{
     private int $id_user;

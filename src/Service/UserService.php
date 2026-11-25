@@ -9,19 +9,21 @@ class UserService{
 
     // This function verify the credentiale from the controller to the database, return a bolean
     public function checkUser(string $username, string $password){
-        $pdo = $this->database->getConnection();
-        $stmt = $pdo->prepare("SELECT 1 FROM user_table WHERE username = ? AND passwrd = ?");
-        $stmt->execute([$username, $password]);
+        // Get the password
+        $passwordDB = $this->getPassword($username);
 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // In the case that credential doesnt respect what in the databse
-        if(!$user){
-            return false;
+        if(password_verify($password, $passwordDB)){
+            return true;
         }
-        
-        // In any other case (True case)
-        return true;
+
+        return false;
+    }
+    public function getPassword(string $username) : string{
+        $pdo = $this->database->getConnection();
+        $stmt = $pdo->prepare("SELECT passwrd FROM user_table WHERE username = ?");
+        $stmt->execute([$username]);
+
+        return $stmt->fetchColumn();
     }
     
     // In the case one user want to create a acount, we need to verify if his email, or other are already linked to a account

@@ -3,13 +3,12 @@
 namespace App\Controller;
 
 use PDOException;
-use PhpParser\Node\Expr\FuncCall;
+use App\Model\UserModel;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Service\UserService;
-use UserModel;
 
 final class UserController extends AbstractController
 {
@@ -59,12 +58,15 @@ final class UserController extends AbstractController
     #[Route('/user/createLogin', name: 'api-createLogin', methods: ['POST'])]
     public function createLogin(Request $request) : JsonResponse{
         try{
+            // Hash the password
+            $hashedPassword = password_hash($request->toArray()['password'], PASSWORD_DEFAULT);
+
             // Verify if the credential doesnt exist
             $UserToCreate = new UserModel(
                 0, // No real need to give an id in that case
                 $request->toArray()['username'],
                 $request->toArray()['email'],
-                $request->toArray()['password'],
+                $hashedPassword, // Putting the hashed password into the object
                 "", // No real need aswell to give name or nickname in that form of the formular
                 "",
             );
@@ -95,4 +97,5 @@ final class UserController extends AbstractController
 
 
     }
+
 }
